@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"flag"
+	"fmt"
 	"golang.org/x/text/encoding/korean"
 	"io"
 	"io/fs"
@@ -120,9 +121,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Print the pak info
+	stat, _ := os.Stat(target)
+	fmt.Printf(`<fileinfo fname="%s" fdir="" fsize="%d" fcrc="%d" fdate="%s" ftime="%s" pname="%s.zip" psize="%d" />`,
+		target,
+		int32(stat.Size()),
+		int32(pakFile.crc32),
+		stat.ModTime().Format("2006-02-1"),
+		stat.ModTime().Format("15-04-05"),
+		"void",
+		0,
+	)
 
-	// Print the crc
-	log.Printf("Pak checksum=%d", int32(pakFile.crc32))
 }
 
 var krEncoder = korean.EUCKR.NewEncoder()
